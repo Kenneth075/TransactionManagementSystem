@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\" />
+    <Folder Include="Caching\" />
+    <Folder Include="External\" />
+    <Folder Include="Security\" />
+  </ItemGroup>
+
 </Project>
