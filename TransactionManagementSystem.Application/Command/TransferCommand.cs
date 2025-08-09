@@ -2,12 +2,12 @@
 
 namespace TransactionManagementSystem.Application.Command
 {
-    public class DepositCommand : IRequest<Guid>
+    public class TransferCommand : IRequest<Guid>
     {
-        public Guid AccountId { get; set; }
+        public Guid FromAccountId { get; set; }
+        public Guid ToAccountId { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }
         public string Reference { get; set; }
     }
-   
 }

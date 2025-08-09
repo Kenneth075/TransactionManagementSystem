@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using TransactionManagementSystem.Application.Command;
+using TransactionManagementSystem.Application.Services.Interfaces;
 using TransactionManagementSystem.Domain.Entities;
+using TransactionManagementSystem.Domain.Enums;
 using TransactionManagementSystem.Infrastructure.Data;
 
 namespace TransactionManagementSystem.Application.CommandHandler
@@ -10,12 +12,15 @@ namespace TransactionManagementSystem.Application.CommandHandler
     {
         private readonly IAppDBContext _context;
         private readonly ILogger<CreateAccountCommandHandler> _logger;
+        private readonly IAccountNumberGenerator _accountNumberGenerator;
 
         public CreateAccountCommandHandler(IAppDBContext context,
-                                           ILogger<CreateAccountCommandHandler> logger)
+                                           ILogger<CreateAccountCommandHandler> logger,
+                                           IAccountNumberGenerator accountNumberGenerator)
         {
             _context = context;
             _logger = logger;
+            _accountNumberGenerator = accountNumberGenerator;
         }
         public async Task<Guid> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
         {
@@ -33,9 +38,23 @@ namespace TransactionManagementSystem.Application.CommandHandler
                 {
                     Id = Guid.NewGuid(),
                     UserId = request.UserId,
-                    AccountNumber = 
-                    
+                    AccountNumber = await _accountNumberGenerator.GenerateAsync(),
+                    Balance = 0,
+                    Status = AccountStatus.Active,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
+                _context.Accounts.Add(account);
+                var result = await _context.SaveChangesAsync(cancellationToken);
+                if (result <= 0)
+                {
+                    _logger.LogError("Failed to create account.");
+                    throw new Exception("Failed to create account.");
+                }
+
+                _logger.LogInformation($"Account created successfully with ID: {account.Id} for user {request.UserId}");
+
+                return account.Id;
             }
             catch (Exception)
             {
