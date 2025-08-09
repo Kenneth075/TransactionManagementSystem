@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Caching\" />
     <Folder Include="External\" />
-    <Folder Include="Security\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionManagementSystem.Domain\TransactionManagementSystem.Domain.csproj" />
   </ItemGroup>
 
 </Project>
