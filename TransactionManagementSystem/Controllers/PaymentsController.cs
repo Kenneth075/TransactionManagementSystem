@@ -22,7 +22,7 @@ namespace TransactionManagementSystem.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost("initialize")]
+        [HttpPost("initializePayment")]
         public async Task<ActionResult<PaymentInitializationResponse>> InitializePayment([FromBody] PaymentRequest request)
         {
             var response = await _paymentService.InitializePaymentAsync(request);
@@ -33,7 +33,7 @@ namespace TransactionManagementSystem.API.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost("verify/{reference}")]
+        [HttpPost("verifyPayment/{reference}")]
         public async Task<ActionResult<PaymentVerificationResponse>> VerifyPayment(string reference)
         {
             var response = await _paymentService.VerifyPaymentAsync(reference);
@@ -51,7 +51,7 @@ namespace TransactionManagementSystem.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("withdraw")]
+        [HttpPost("processWithdraw")]
         public async Task<ActionResult<WithdrawalResponse>> ProcessWithdrawal([FromBody] WithdrawalRequest request)
         {
             var response = await _paymentService.ProcessWithdrawalAsync(request);

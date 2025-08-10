@@ -10,11 +10,11 @@ namespace TransactionManagementSystem.Application.Services
 {
     public class TransactionService : ITransactionService
     {
-        private readonly IAppDBContext _appDBContext;
+        private readonly AppDbContext _appDBContext;
         private readonly ILogger<TransactionService> _logger;
         private readonly ICacheService _cacheService;
 
-        public TransactionService(IAppDBContext appDBContext,
+        public TransactionService(AppDbContext appDBContext,
                                   ILogger<TransactionService> logger,
                                   ICacheService cacheService)
         {

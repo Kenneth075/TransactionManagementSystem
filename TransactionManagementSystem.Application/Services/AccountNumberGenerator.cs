@@ -6,10 +6,10 @@ namespace TransactionManagementSystem.Application.Services
 {
     public class AccountNumberGenerator : IAccountNumberGenerator
     {
-        private readonly IAppDBContext _appDBContext;
+        private readonly AppDbContext _appDBContext;
         private const string Prefix = "ACC";
 
-        public AccountNumberGenerator(IAppDBContext appDBContext)
+        public AccountNumberGenerator(AppDbContext appDBContext)
         {
             _appDBContext = appDBContext;
         }

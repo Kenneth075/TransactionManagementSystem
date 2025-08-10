@@ -44,13 +44,6 @@ namespace TransactionManagementSystem.Infrastructure.Caching
             await _distributedCache.RemoveAsync(key);
         }
 
-        public Task RemoveByPatternAsync(string pattern)
-        {
-            // Note: This requires a Redis-specific implementation
-            // For the basic IDistributedCache interface, we can't implement pattern removal
-            // You'd need to use a Redis-specific client like StackExchange.Redis
-            throw new NotImplementedException("Pattern-based removal requires Redis-specific implementation");
-
-        }
+        
     }
 }

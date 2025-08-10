@@ -10,11 +10,11 @@ namespace TransactionManagementSystem.Application.CommandHandler
 {
     public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Guid>
     {
-        private readonly IAppDBContext _context;
+        private readonly AppDbContext _context;
         private readonly ILogger<CreateAccountCommandHandler> _logger;
         private readonly IAccountNumberGenerator _accountNumberGenerator;
 
-        public CreateAccountCommandHandler(IAppDBContext context,
+        public CreateAccountCommandHandler(AppDbContext context,
                                            ILogger<CreateAccountCommandHandler> logger,
                                            IAccountNumberGenerator accountNumberGenerator)
         {

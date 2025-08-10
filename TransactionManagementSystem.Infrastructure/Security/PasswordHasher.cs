@@ -47,11 +47,7 @@ namespace TransactionManagementSystem.Infrastructure.Security
             return hash == hashed;
         }
 
-        public interface IEncryptionService
-        {
-            string Encrypt(string plainText);
-            string Decrypt(string cipherText);
-        }
+       
     }
 
     
