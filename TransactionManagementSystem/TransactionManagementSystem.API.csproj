@@ -22,11 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TransactionManagementSystem.Application\TransactionManagementSystem.Application.csproj" />
     <ProjectReference Include="..\TransactionManagementSystem.Domain\TransactionManagementSystem.Domain.csproj" />
     <ProjectReference Include="..\TransactionManagementSystem.Infrastructure\TransactionManagementSystem.Infrastructure.csproj" />

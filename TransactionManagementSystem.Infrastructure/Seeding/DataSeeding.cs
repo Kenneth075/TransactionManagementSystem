@@ -30,9 +30,9 @@ namespace TransactionManagementSystem.Infrastructure.Seeding
                 var testUser = new User
                 {
                     Id = Guid.NewGuid(),
-                    FirstName = "John",
-                    LastName = "Doe",
-                    Email = "john.doe@example.com",
+                    FirstName = "Kenneth",
+                    LastName = "Edoho",
+                    Email = "kenneth.edoho@bankingsystem.com",
                     PhoneNumber = "+1234567891",
                     PasswordHash = passwordHasher.HashPassword("Test123!"),
                     Role = UserRole.Customer,
