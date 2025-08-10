@@ -1,4 +1,6 @@
-﻿using TransactionManagementSystem.API.Middleware;
+﻿using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using TransactionManagementSystem.API.Middleware;
 
 namespace TransactionManagementSystem.API.Extensions
 {
@@ -26,6 +28,11 @@ namespace TransactionManagementSystem.API.Extensions
 
             app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
 
             return app;
         }

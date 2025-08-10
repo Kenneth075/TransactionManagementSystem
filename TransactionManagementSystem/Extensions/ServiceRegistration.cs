@@ -28,6 +28,11 @@ namespace TransactionManagementSystem.API.Extensions
             });
             services.AddScoped<ICacheService, RedisCacheServices>();
 
+            // Health Checks
+            services.AddHealthChecks()
+                .AddDbContextCheck<AppDbContext>()
+                .AddRedis(configuration.GetConnectionString("Redis"), name: "Redis Cache");
+
             // Authentication & Authorization
             var jwtSettings = configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["SecretKey"];
