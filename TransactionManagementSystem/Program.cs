@@ -1,11 +1,22 @@
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Reflection;
+using System.Text;
 using TransactionManagementSystem.API.Extensions;
+using TransactionManagementSystem.Application.Services;
+using TransactionManagementSystem.Application.Services.Interfaces;
+using TransactionManagementSystem.Infrastructure.Caching;
+using TransactionManagementSystem.Infrastructure.Data;
+using TransactionManagementSystem.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
@@ -13,25 +24,121 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Services
-builder.Services.AddApplicationServices(builder.Configuration);
+// Add services to the container
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add Redis Cache
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
 
+// Add MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+// Add custom services
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
+builder.Services.AddScoped<IAccountNumberGenerator, AccountNumberGenerator>();
+builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddHttpClient<IPaystackService, PaystackService>();
+
+// Add JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "YourSecretKeyHere";
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
-// Database Init
-await app.InitializeDatabaseAsync();
+// Configure the HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-// Middleware
-app.UseConfiguredMiddleware();
-
-
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-app.MapHealthChecks("/health");
 
-app.Run();
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+}
+
+try
+{
+    Log.Information("Starting Banking System API");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
+
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration)
+//    .Enrich.FromLogContext()
+//    .CreateLogger();
+
+//builder.Host.UseSerilog();
+
+//// Services
+//builder.Services.AddApplicationServices(builder.Configuration);
+
+
+
+//var app = builder.Build();
+
+//// Database Init
+//await app.InitializeDatabaseAsync();
+
+//// Middleware
+//app.UseConfiguredMiddleware();
+
+
+//app.UseHttpsRedirection();
+//app.UseAuthentication();
+//app.UseAuthorization();
+
+//app.MapControllers();
+//app.MapHealthChecks("/health");
+
+//app.Run();

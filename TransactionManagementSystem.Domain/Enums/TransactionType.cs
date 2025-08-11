@@ -2,9 +2,9 @@
 {
     public enum TransactionType
     {
-        Deposit,
-        Withdrawal,
-        Transfer,
-        OnlinePayment 
+        Deposit = 1,
+        Withdrawal = 2,
+        Transfer = 3,
+        ExternalPayment = 4
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -26,7 +27,7 @@ namespace TransactionManagementSystem.API.Extensions
             {
                 options.Configuration = configuration.GetConnectionString("Redis");
             });
-            services.AddScoped<ICacheService, RedisCacheServices>();
+            services.AddScoped<ICacheService, CacheService>();
 
             // Health Checks
             services.AddHealthChecks()
@@ -67,14 +68,14 @@ namespace TransactionManagementSystem.API.Extensions
             });
 
             // Security Services
-            services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<IEncryptionService>(provider =>
-                new AesEncryptionService(configuration["Security:EncryptionKey"]));
-            services.AddScoped<IJwtTokenService>(provider =>
-                new JwtTokenService(secretKey, jwtSettings["Issuer"], jwtSettings["Audience"]));
+            //services.AddScoped<IPasswordHasher, PasswordHasher>();
+            //services.AddScoped<IEncryptionService>(provider =>
+            //    new EncryptionService(configuration["Security:EncryptionKey"]));
+            //services.AddScoped<IJwtTokenService>(provider =>
+            //    new JwtTokenService(secretKey, jwtSettings["Issuer"], jwtSettings["Audience"]));
 
             // External Services
-            services.AddHttpClient<IPaymentsService, PaystackService>();
+            services.AddHttpClient<IPaystackService, PaystackService>();
 
             services.AddScoped<IAccountNumberGenerator, AccountNumberGenerator>();
             services.AddScoped<ITransactionService, TransactionService>();

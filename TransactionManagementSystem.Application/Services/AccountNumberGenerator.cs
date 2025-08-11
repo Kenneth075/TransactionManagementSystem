@@ -6,29 +6,11 @@ namespace TransactionManagementSystem.Application.Services
 {
     public class AccountNumberGenerator : IAccountNumberGenerator
     {
-        private readonly AppDbContext _appDBContext;
-        private const string Prefix = "ACC";
-
-        public AccountNumberGenerator(AppDbContext appDBContext)
+        public Task<string> GenerateAsync()
         {
-            _appDBContext = appDBContext;
-        }
-
-        public async Task<string> GenerateAsync()
-        {
-            string accountNumber;
-            bool exists;
-            do
-            {
-                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var randomNumber = new Random().Next(1000, 9999);
-                accountNumber = $"{Prefix}{timestamp % 100000000}{randomNumber}";
-
-                exists = _appDBContext.Accounts.Any(a => a.AccountNumber == accountNumber);
-
-            } while (exists);
-
-            return accountNumber;
+            // Generate a 10-digit account number
+            var accountNumber = $"1{DateTime.UtcNow:yyyyMMdd}{Random.Shared.Next(10, 99)}";
+            return Task.FromResult(accountNumber);
         }
     }
 }

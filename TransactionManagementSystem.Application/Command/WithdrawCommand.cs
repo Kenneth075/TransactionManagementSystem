@@ -2,13 +2,12 @@
 
 namespace TransactionManagementSystem.Application.Command
 {
-    public class WithdrawCommand : IRequest<Guid>
+    public class WithdrawCommand : IRequest<TransactionResponse>
     {
-        public Guid FromAccountId { get; set; }
-        public Guid ToAccountId { get; set; }
+        public Guid AccountId { get; set; }
         public decimal Amount { get; set; }
-        public string Description { get; set; }
-        public string Reference { get; set; }
+        public string? Description { get; set; }
+        public string? ExternalReference { get; set; }
     }
   
 }

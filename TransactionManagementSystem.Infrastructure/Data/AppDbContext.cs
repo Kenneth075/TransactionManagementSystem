@@ -17,92 +17,53 @@ namespace TransactionManagementSystem.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
-            modelBuilder.ApplyConfiguration(new TransactionConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new AccountConfiguration());
-        }
 
-        public class UserConfiguration : IEntityTypeConfiguration<User>
-        {
-            public void Configure(EntityTypeBuilder<User> builder)
+            // User configuration
+            modelBuilder.Entity<User>(entity =>
             {
-                builder.HasKey(u => u.Id);
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.Email).HasMaxLength(200);
+                entity.Property(e => e.FirstName).HasMaxLength(100);
+                entity.Property(e => e.LastName).HasMaxLength(100);
+                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+            });
 
-                builder.Property(u => u.FirstName)
-                    .IsRequired()
-                    .HasMaxLength(20);
+            // Account configuration
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.AccountNumber).IsUnique();
+                entity.Property(e => e.AccountNumber).HasMaxLength(100);
+                entity.Property(e => e.AccountHolderName).HasMaxLength(200);
+                entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
 
-                builder.Property(u => u.LastName)
-                    .IsRequired()
-                    .HasMaxLength(20);
-
-                builder.Property(u => u.Email)
-                    .IsRequired()
-                    .HasMaxLength(255);
-
-                builder.Property(u => u.PhoneNumber)
-                    .HasMaxLength(20);
-
-                builder.Property(u => u.PasswordHash)
-                    .IsRequired()
-                    .HasMaxLength(255);
-
-                builder.HasIndex(u => u.Email).IsUnique();
-
-                builder.HasMany(u => u.Accounts)
-                    .WithOne(a => a.User)
-                    .HasForeignKey(a => a.UserId)
+                entity.HasOne(e => e.User)
+                    .WithMany(e => e.Accounts)
+                    .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
-            }
-        }
+            });
 
-        public class AccountConfiguration : IEntityTypeConfiguration<Account>
-        {
-            public void Configure(EntityTypeBuilder<Account> builder)
+            // Transaction configuration
+            modelBuilder.Entity<Transaction>(entity =>
             {
-                builder.HasKey(a => a.Id);
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.ReferenceNumber).IsUnique();
+                entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.ReferenceNumber).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
 
-                builder.Property(a => a.AccountNumber)
-                    .IsRequired()
-                    .HasMaxLength(20);
-
-                builder.Property(a => a.Balance)
-                    .HasPrecision(18, 2);
-
-                builder.HasIndex(a => a.AccountNumber).IsUnique();
-
-                builder.HasMany(a => a.Transactions)
-                    .WithOne(t => t.FromAccount)
-                    .HasForeignKey(t => t.FromAccountId)
+                entity.HasOne(e => e.FromAccount)
+                    .WithMany(e => e.Transactions)
+                    .HasForeignKey(e => e.FromAccountId)
                     .OnDelete(DeleteBehavior.Restrict);
-            }
-        }
 
-        public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
-        {
-            public void Configure(EntityTypeBuilder<Transaction> builder)
-            {
-                builder.HasKey(t => t.Id);
-
-                builder.Property(t => t.Amount)
-                    .HasPrecision(18, 2);
-
-                builder.Property(t => t.Description)
-                    .HasMaxLength(500);
-
-                builder.Property(t => t.Reference)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                builder.HasIndex(t => t.Reference);
-                builder.HasIndex(t => t.CreatedAt);
-
-                builder.HasOne(t => t.ToAccount)
+                entity.HasOne(e => e.ToAccount)
                     .WithMany()
-                    .HasForeignKey(t => t.ToAccountId)
+                    .HasForeignKey(e => e.ToAccountId)
                     .OnDelete(DeleteBehavior.Restrict);
-            }
+            });
         }
+
     }
 }

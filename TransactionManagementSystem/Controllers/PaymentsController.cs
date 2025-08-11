@@ -9,11 +9,11 @@ namespace TransactionManagementSystem.API.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPaymentsService _paymentService;
+        private readonly IPaystackService _paymentService;
         private readonly IMediator _mediator;
         private readonly ILogger<PaymentsController> _logger;
 
-        public PaymentsController(IPaymentsService paymentServices,
+        public PaymentsController(IPaystackService paymentServices,
                                   IMediator mediator,
                                   ILogger<PaymentsController> logger)
         {
@@ -25,7 +25,7 @@ namespace TransactionManagementSystem.API.Controllers
         [HttpPost("initializePayment")]
         public async Task<ActionResult<PaymentInitializationResponse>> InitializePayment([FromBody] PaymentRequest request)
         {
-            var response = await _paymentService.InitializePaymentAsync(request);
+            var response = await _paymentService.InitializePaymentAsync(request.Amount,request.Email,request.Reference);
 
             if (response.Success)
                 return Ok(response);
@@ -38,14 +38,13 @@ namespace TransactionManagementSystem.API.Controllers
         {
             var response = await _paymentService.VerifyPaymentAsync(reference);
 
-            if (response.Success && response.Status == "success")
+            if (response.Success && response.Message == "success")
             {
                 // Process the payment as a deposit
                 // Note: You'll need to map the reference to an account
                 // This is simplified - in reality you'd store this mapping during initialization
 
-                _logger.LogInformation("Payment verified successfully: {Reference} - {Amount:C}",
-                    reference, response.Amount);
+                _logger.LogInformation($"Payment verified successfully: {reference}");
             }
 
             return Ok(response);

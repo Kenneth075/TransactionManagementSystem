@@ -1,20 +1,42 @@
-﻿using TransactionManagementSystem.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using TransactionManagementSystem.Domain.Enums;
 
 namespace TransactionManagementSystem.Domain.Entities
 {
     public class User
     {
-        public Guid Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string PhoneNumber { get; set; }
-        public UserRole Role { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
-        //public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        [Required]
+        [MaxLength(100)]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required]
+        [EmailAddress]
+        [MaxLength(200)]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(20)]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [Required]
+        public string PasswordHash { get; set; } = string.Empty;
+
+        [Required]
+        public UserRole Role { get; set; } = UserRole.Customer;
+
+        public bool IsEmailVerified { get; set; }
+        public bool IsActive { get; set; } = true;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation properties
+        public ICollection<Account> Accounts { get; set; } = new List<Account>();
     }
 }

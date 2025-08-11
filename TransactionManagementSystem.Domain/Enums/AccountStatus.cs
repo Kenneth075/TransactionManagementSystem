@@ -2,9 +2,9 @@
 {
     public enum AccountStatus
     {
-        Active,
-        Inactive,
-        Frozen,
-        Closed
+        Active = 1,
+        Inactive = 2,
+        Frozen = 3,
+        Closed = 4
     }
 }
