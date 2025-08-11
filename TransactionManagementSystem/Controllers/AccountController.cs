@@ -1,10 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Security.Principal;
 using TransactionManagementSystem.Application.Command;
-using TransactionManagementSystem.Application.DTOs;
 using TransactionManagementSystem.Application.Query;
 
 namespace TransactionManagementSystem.API.Controllers

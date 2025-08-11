@@ -20,9 +20,9 @@ namespace TransactionManagementSystem.Infrastructure.Security
 
         public EncryptionService(IConfiguration configuration)
         {
-            var keyString = configuration["Encryption:Key"] ?? "MySecretKey12345"; // Should be from secure config
+            var keyString = configuration["Security:Key"];
             _key = Encoding.UTF8.GetBytes(keyString.PadRight(32));
-            _iv = Encoding.UTF8.GetBytes("MyInitVector16B"); // Should be random for each encryption
+            _iv = Encoding.UTF8.GetBytes("MyInitVector16B"); 
         }
 
         public string Encrypt(string plainText)
