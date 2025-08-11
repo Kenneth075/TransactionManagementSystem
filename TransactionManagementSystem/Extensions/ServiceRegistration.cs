@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -10,7 +9,6 @@ using TransactionManagementSystem.Application.Services;
 using TransactionManagementSystem.Application.Services.Interfaces;
 using TransactionManagementSystem.Infrastructure.Caching;
 using TransactionManagementSystem.Infrastructure.Data;
-using TransactionManagementSystem.Infrastructure.Security;
 
 namespace TransactionManagementSystem.API.Extensions
 {
@@ -78,7 +76,7 @@ namespace TransactionManagementSystem.API.Extensions
             services.AddHttpClient<IPaystackService, PaystackService>();
 
             services.AddScoped<IAccountNumberGenerator, AccountNumberGenerator>();
-            services.AddScoped<ITransactionService, TransactionService>();
+            //services.AddScoped<ITransactionService, TransactionService>();
 
             // MediatR
             services.AddMediatR(cfg =>
