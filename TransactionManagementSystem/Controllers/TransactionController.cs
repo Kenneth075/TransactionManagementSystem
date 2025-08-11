@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TransactionManagementSystem.Application.Command;
 using TransactionManagementSystem.Application.DTOs;
@@ -7,6 +8,7 @@ namespace TransactionManagementSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TransactionController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,6 +21,7 @@ namespace TransactionManagementSystem.API.Controllers
         }
 
         [HttpPost("deposit")]
+        [Authorize(Roles = "Customer,Admin,SuperAdmin")]
         public async Task<IActionResult> Deposit([FromBody] DepositCommand command)
         {
             try
