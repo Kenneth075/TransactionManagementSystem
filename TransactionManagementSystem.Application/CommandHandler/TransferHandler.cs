@@ -25,7 +25,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
 
             try
             {
-                // Validate both accounts exist and are active
+
                 var fromAccount = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == request.FromAccountId && a.Status == AccountStatus.Active, cancellationToken);
 
                 var toAccount = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == request.ToAccountId && a.Status == AccountStatus.Active, cancellationToken);
@@ -66,7 +66,6 @@ namespace TransactionManagementSystem.Application.CommandHandler
                     };
                 }
 
-                // Prevent self-transfer
                 if (request.FromAccountId == request.ToAccountId)
                 {
                     return new TransactionResponse
@@ -88,7 +87,6 @@ namespace TransactionManagementSystem.Application.CommandHandler
                     ProcessedAt = DateTime.UtcNow
                 };
 
-                // Update balances
                 fromAccount.Balance -= request.Amount;
                 fromAccount.UpdatedAt = DateTime.UtcNow;
 

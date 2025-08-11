@@ -28,7 +28,7 @@ namespace TransactionManagementSystem.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
-        public UserRole Role { get; set; } = UserRole.Customer;
+        public UserRole Role { get; set; }
 
         public bool IsEmailVerified { get; set; }
         public bool IsActive { get; set; } = true;

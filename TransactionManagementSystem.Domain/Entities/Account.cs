@@ -10,11 +10,11 @@ namespace TransactionManagementSystem.Domain.Entities
 
         [Required]
         [MaxLength(100)]
-        public string AccountNumber { get; set; } = string.Empty;
+        public string AccountNumber { get; set; }
 
         [Required]
         [MaxLength(200)]
-        public string AccountHolderName { get; set; } = string.Empty;
+        public string AccountHolderName { get; set; }
 
         [Required]
         public decimal Balance { get; set; }

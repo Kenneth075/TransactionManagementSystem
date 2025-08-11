@@ -32,13 +32,9 @@ namespace TransactionManagementSystem.Domain.Entities
         [Required]
         [MaxLength(100)]
         public string ReferenceNumber { get; set; } = string.Empty;
-
         public string? ExternalReference { get; set; }
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ProcessedAt { get; set; }
-
-        // Navigation properties
         public Account FromAccount { get; set; } = null!;
         public Account? ToAccount { get; set; }
     }

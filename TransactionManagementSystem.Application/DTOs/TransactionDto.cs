@@ -12,7 +12,7 @@ namespace TransactionManagementSystem.Application.DTOs
         public string ReferenceNumber { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? ProcessedAt { get; set; }
-        public string? ToAccountNumber { get; set; }
+        public Guid? FromAccountId { get; set; }
 
     }
 }

@@ -1,9 +1,11 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TransactionManagementSystem.Application.Command;
 using TransactionManagementSystem.Application.Services.Interfaces;
 using TransactionManagementSystem.Domain.Entities;
 using TransactionManagementSystem.Domain.Enums;
+using TransactionManagementSystem.Domain.Exceptions;
 using TransactionManagementSystem.Infrastructure.Data;
 
 namespace TransactionManagementSystem.Application.CommandHandler
@@ -29,12 +31,19 @@ namespace TransactionManagementSystem.Application.CommandHandler
             {
                 using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
+                //var userDetails = await _context.Users.Where(x => x.Id == request.UserId).FirstOrDefaultAsync(cancellationToken);
+                //if (userDetails != null)
+                //{
+                //    throw new AccountNotFoundException($"User does not exist");
+                //}
+
                 var accountNumber = await _accountNumberGenerator.GenerateAsync();
 
                 var account = new Account
                 {
                     AccountNumber = accountNumber,
                     AccountHolderName = request.AccountHolderName,
+                    //AccountHolderName = userDetails.FirstName,
                     AccountType = request.AccountType,
                     Balance = request.InitialDeposit,
                     UserId = request.UserId
@@ -61,8 +70,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
-                _logger.LogInformation("Account created successfully. AccountId: {AccountId}, AccountNumber: {AccountNumber}",
-                    account.Id, account.AccountNumber);
+                _logger.LogInformation($"Account created successfully. AccountId: {account.Id}, AccountNumber: {account.AccountNumber}");
 
                 return new CreateAccountResponse
                 {
@@ -74,7 +82,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating account for user {UserId}", request.UserId);
+                _logger.LogError(ex, $"Error creating account for user {request.UserId}");
                 return new CreateAccountResponse
                 {
                     Success = false,

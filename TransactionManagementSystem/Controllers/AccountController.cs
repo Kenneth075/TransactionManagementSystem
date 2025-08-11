@@ -24,6 +24,7 @@ namespace TransactionManagementSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountCommand command)
         {
             try

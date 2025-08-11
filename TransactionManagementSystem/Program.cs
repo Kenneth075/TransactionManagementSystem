@@ -1,14 +1,13 @@
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
 using System.Text;
-using TransactionManagementSystem.API.Extensions;
+using System.Text.Json.Serialization;
+using TransactionManagementSystem.Application.Command;
+using TransactionManagementSystem.Application.Query;
 using TransactionManagementSystem.Application.Services;
 using TransactionManagementSystem.Application.Services.Interfaces;
 using TransactionManagementSystem.Infrastructure.Caching;
@@ -36,7 +35,10 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 // Add MediatR
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(CreateAccountCommand).Assembly);
+});
 
 // Add custom services
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
@@ -45,7 +47,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddHttpClient<IPaystackService, PaystackService>();
 
 // Add JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "YourSecretKeyHere";
+var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -55,15 +57,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -149,32 +156,3 @@ finally
     Log.CloseAndFlush();
 }
 
-//Log.Logger = new LoggerConfiguration()
-//    .ReadFrom.Configuration(builder.Configuration)
-//    .Enrich.FromLogContext()
-//    .CreateLogger();
-
-//builder.Host.UseSerilog();
-
-//// Services
-//builder.Services.AddApplicationServices(builder.Configuration);
-
-
-
-//var app = builder.Build();
-
-//// Database Init
-//await app.InitializeDatabaseAsync();
-
-//// Middleware
-//app.UseConfiguredMiddleware();
-
-
-//app.UseHttpsRedirection();
-//app.UseAuthentication();
-//app.UseAuthorization();
-
-//app.MapControllers();
-//app.MapHealthChecks("/health");
-
-//app.Run();

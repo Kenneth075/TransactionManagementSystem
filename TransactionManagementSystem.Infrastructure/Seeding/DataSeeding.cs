@@ -20,9 +20,11 @@ namespace TransactionManagementSystem.Infrastructure.Seeding
                     FirstName = "System",
                     LastName = "Administrator",
                     Email = "admin@bankingsystem.com",
-                    PhoneNumber = "+1234567890",
+                    PhoneNumber = "+2348138933344",
                     PasswordHash = passwordHasher.HashPassword("Admin123!"),
                     Role = UserRole.Admin,
+                    IsActive = true,
+                    IsEmailVerified = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -33,9 +35,11 @@ namespace TransactionManagementSystem.Infrastructure.Seeding
                     FirstName = "Kenneth",
                     LastName = "Edoho",
                     Email = "kenneth.edoho@bankingsystem.com",
-                    PhoneNumber = "+1234567891",
+                    PhoneNumber = "+2348138933344",
                     PasswordHash = passwordHasher.HashPassword("Test123!"),
                     Role = UserRole.Customer,
+                    IsEmailVerified = true,
+                    IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -46,9 +50,11 @@ namespace TransactionManagementSystem.Infrastructure.Seeding
                 {
                     Id = Guid.NewGuid(),
                     UserId = testUser.Id,
-                    AccountNumber = "ACC1000000001",
+                    AccountNumber = "1000000001",
                     Balance = 1000.00m,
                     Status = AccountStatus.Active,
+                    AccountType = AccountType.Savings,
+                    AccountHolderName = "Kenneth Edoho",
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };

@@ -49,7 +49,7 @@ namespace TransactionManagementSystem.API.Controllers
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
                     PasswordHash = _encryptionService.HashPassword(request.Password),
-                    Role = UserRole.Customer
+                    Role = request.Role,
                 };
 
                 _context.Users.Add(user);
@@ -102,7 +102,7 @@ namespace TransactionManagementSystem.API.Controllers
 
         private string GenerateJwtToken(User user)
         {
-            var jwtKey = _configuration["Jwt:Key"] ?? "YourSecretKeyHere";
+            var jwtKey = _configuration["JwtSettings:SecretKey"];
             var key = Encoding.ASCII.GetBytes(jwtKey);
 
             var claims = new[]
@@ -118,8 +118,8 @@ namespace TransactionManagementSystem.API.Controllers
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(24),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = _configuration["Jwt:Issuer"],
-                Audience = _configuration["Jwt:Audience"]
+                Issuer = _configuration["JwtSettings:Issuer"],
+                Audience = _configuration["JwtSettings:Audience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -130,11 +130,12 @@ namespace TransactionManagementSystem.API.Controllers
 
     public class RegisterRequest
     {
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string FirstName { get; set; } 
+        public string LastName { get; set; } 
+        public string Email { get; set; } 
+        public string PhoneNumber { get; set; } 
+        public string Password { get; set; }
+        public UserRole Role { get; set; }
     }
 
     public class LoginRequest

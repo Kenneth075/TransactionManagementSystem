@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TransactionManagementSystem.Domain.Entities;
 
 namespace TransactionManagementSystem.Infrastructure.Data
@@ -27,6 +26,9 @@ namespace TransactionManagementSystem.Infrastructure.Data
                 entity.Property(e => e.FirstName).HasMaxLength(100);
                 entity.Property(e => e.LastName).HasMaxLength(100);
                 entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+
+                entity.Property(e => e.Role).HasConversion<string>();
+
             });
 
             // Account configuration
@@ -37,6 +39,11 @@ namespace TransactionManagementSystem.Infrastructure.Data
                 entity.Property(e => e.AccountNumber).HasMaxLength(100);
                 entity.Property(e => e.AccountHolderName).HasMaxLength(200);
                 entity.Property(e => e.Balance).HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.AccountType)
+                      .HasConversion<string>();
+                entity.Property(e => e.Status)
+                      .HasConversion<string>();
 
                 entity.HasOne(e => e.User)
                     .WithMany(e => e.Accounts)
@@ -52,6 +59,9 @@ namespace TransactionManagementSystem.Infrastructure.Data
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.ReferenceNumber).HasMaxLength(100);
                 entity.Property(e => e.Description).HasMaxLength(500);
+
+                entity.Property(t => t.Type).HasConversion<string>();
+                entity.Property(t => t.Status).HasConversion<string>();
 
                 entity.HasOne(e => e.FromAccount)
                     .WithMany(e => e.Transactions)

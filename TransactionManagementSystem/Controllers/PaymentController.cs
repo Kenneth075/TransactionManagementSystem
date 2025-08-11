@@ -51,7 +51,6 @@ namespace TransactionManagementSystem.API.Controllers
 
                 if (response.Success)
                 {
-                    // Create a pending transaction record
                     var transaction = new Transaction
                     {
                         FromAccountId = request.AccountId,

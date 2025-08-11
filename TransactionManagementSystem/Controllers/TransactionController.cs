@@ -21,7 +21,7 @@ namespace TransactionManagementSystem.API.Controllers
         }
 
         [HttpPost("deposit")]
-        [Authorize(Roles = "Customer,Admin,SuperAdmin")]
+        [Authorize(Roles = "Customer,Admin")]
         public async Task<IActionResult> Deposit([FromBody] DepositCommand command)
         {
             try
