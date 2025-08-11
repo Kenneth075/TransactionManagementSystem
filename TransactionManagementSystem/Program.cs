@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -40,11 +41,13 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CreateAccountCommand).Assembly);
 });
 
+//builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 // Add custom services
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddScoped<IAccountNumberGenerator, AccountNumberGenerator>();
 builder.Services.AddScoped<ICacheService, CacheService>();
-builder.Services.AddHttpClient<IPaystackService, PaystackService>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 // Add JWT Authentication
 var jwtKey = builder.Configuration["JwtSettings:SecretKey"];

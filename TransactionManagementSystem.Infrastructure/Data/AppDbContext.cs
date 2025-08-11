@@ -12,6 +12,7 @@ namespace TransactionManagementSystem.Infrastructure.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
