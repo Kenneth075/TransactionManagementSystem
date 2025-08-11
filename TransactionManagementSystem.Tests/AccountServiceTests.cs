@@ -6,7 +6,6 @@ using TransactionManagementSystem.Application.CommandHandler;
 using TransactionManagementSystem.Application.Services.Interfaces;
 using TransactionManagementSystem.Domain.Entities;
 using TransactionManagementSystem.Domain.Enums;
-using TransactionManagementSystem.Domain.Exceptions;
 using TransactionManagementSystem.Infrastructure.Data;
 
 namespace TransactionManagementSystem.Tests
@@ -21,6 +20,7 @@ namespace TransactionManagementSystem.Tests
             return new AppDbContext(options);
         }
 
+   
         [Fact]
         public async Task CreateAccount_ShouldCreateAccount_WhenValidRequest()
         {
@@ -36,7 +36,7 @@ namespace TransactionManagementSystem.Tests
 
             var command = new CreateAccountCommand
             {
-                AccountHolderName = "John Doe",
+                AccountHolderName = "Kenneth Edoho",
                 AccountType = AccountType.Savings,
                 UserId = Guid.NewGuid(),
                 InitialDeposit = 1000
@@ -52,12 +52,16 @@ namespace TransactionManagementSystem.Tests
             var account = await context.Accounts.FirstOrDefaultAsync();
             Assert.NotNull(account);
             Assert.Equal(1000, account.Balance);
+
+            var transaction = await context.Transactions.FirstOrDefaultAsync();
+            Assert.NotNull(transaction);
+            Assert.Equal(TransactionType.Deposit, transaction.Type);
+            Assert.Equal(1000, transaction.Amount);
         }
 
         [Fact]
-        public async Task Deposit_ShouldIncreaseBalance_WhenValidAmount()
+        public async Task Deposit_ShouldIncreaseBalance_AndAddTransaction()
         {
-            // Arrange
             using var context = GetInMemoryContext();
             var mockLogger = new Mock<ILogger<DepositHandler>>();
 
@@ -65,7 +69,7 @@ namespace TransactionManagementSystem.Tests
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "1234567890",
-                AccountHolderName = "John Doe",
+                AccountHolderName = "Kenneth Edoho",
                 Balance = 500,
                 AccountType = AccountType.Savings,
                 Status = AccountStatus.Active,
@@ -83,21 +87,23 @@ namespace TransactionManagementSystem.Tests
                 Description = "Test deposit"
             };
 
-            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
-            // Assert
             Assert.True(result.Success);
             Assert.Equal(700, result.NewBalance);
 
             var updatedAccount = await context.Accounts.FindAsync(account.Id);
             Assert.Equal(700, updatedAccount!.Balance);
+
+            var transaction = await context.Transactions.FirstOrDefaultAsync();
+            Assert.NotNull(transaction);
+            Assert.Equal(TransactionType.Deposit, transaction.Type);
+            Assert.Equal(200, transaction.Amount);
         }
 
         [Fact]
         public async Task Withdraw_ShouldFail_WhenInsufficientFunds()
         {
-            // Arrange
             using var context = GetInMemoryContext();
             var mockLogger = new Mock<ILogger<WithdrawHandler>>();
 
@@ -105,7 +111,7 @@ namespace TransactionManagementSystem.Tests
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "1234567890",
-                AccountHolderName = "John Doe",
+                AccountHolderName = "Kenneth Edoho",
                 Balance = 100,
                 AccountType = AccountType.Savings,
                 Status = AccountStatus.Active,
@@ -123,15 +129,17 @@ namespace TransactionManagementSystem.Tests
                 Description = "Test withdrawal"
             };
 
-            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
-            // Assert
             Assert.False(result.Success);
             Assert.Equal("Insufficient funds", result.Message);
 
             var updatedAccount = await context.Accounts.FindAsync(account.Id);
-            Assert.Equal(100, updatedAccount!.Balance); // Balance should remain unchanged
+            Assert.Equal(100, updatedAccount!.Balance);
+
+            // Make sure no transaction was recorded
+            var transactions = await context.Transactions.ToListAsync();
+            Assert.Empty(transactions);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TransactionManagementSystem.Domain.Enums;
-using TransactionManagementSystem.Domain.Exceptions;
 
 namespace TransactionManagementSystem.Domain.Entities
 {

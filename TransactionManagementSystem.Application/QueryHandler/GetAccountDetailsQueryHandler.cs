@@ -20,6 +20,7 @@ namespace TransactionManagementSystem.Application.QueryHandler
 
         public async Task<AccountDetailsResponse> Handle(GetAccountDetailsQuery request, CancellationToken cancellationToken)
         {
+
             _logger.LogInformation($"Inside ==> {nameof(GetAccountDetailsQueryHandler)}");
 
             var account = await _context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Id == request.AccountId, cancellationToken);

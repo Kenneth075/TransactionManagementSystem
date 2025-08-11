@@ -46,6 +46,7 @@ namespace TransactionManagementSystem.API.Controllers
         }
 
         [HttpGet("{accountId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAccountDetails(Guid accountId)
         {
             try
@@ -62,12 +63,7 @@ namespace TransactionManagementSystem.API.Controllers
         }
 
         [HttpGet("{accountId}/transactions")]
-        public async Task<IActionResult> GetTransactionHistory(
-            Guid accountId,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] DateTime? fromDate = null,
-            [FromQuery] DateTime? toDate = null)
+        public async Task<IActionResult> GetTransactionHistory(Guid accountId,[FromQuery] int pageNumber = 1,[FromQuery] int pageSize = 10,[FromQuery] DateTime? fromDate = null,[FromQuery] DateTime? toDate = null)
         {
             try
             {

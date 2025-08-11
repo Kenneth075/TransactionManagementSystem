@@ -21,7 +21,8 @@ namespace TransactionManagementSystem.Application.CommandHandler
 
         public async Task<TransactionResponse> Handle(WithdrawCommand request, CancellationToken cancellationToken)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            //using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+       
 
             try
             {
@@ -71,7 +72,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
 
                 _context.Transactions.Add(withdrawTransaction);
                 await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
+                //await transaction.CommitAsync(cancellationToken);
 
                 _logger.LogInformation("Withdrawal successful. AccountId: {AccountId}, Amount: {Amount}, New Balance: {Balance}",
                     request.AccountId, request.Amount, account.Balance);
@@ -87,7 +88,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
+                //await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error processing withdrawal for account {AccountId}", request.AccountId);
 
                 return new TransactionResponse

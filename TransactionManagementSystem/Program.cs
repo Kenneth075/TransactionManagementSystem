@@ -17,7 +17,6 @@ using TransactionManagementSystem.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
@@ -25,23 +24,19 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Add services to the container
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Redis Cache
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
-// Add MediatR
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(CreateAccountCommand).Assembly);
 });
-
-//builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Add custom services
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();

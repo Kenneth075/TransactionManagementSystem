@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using TransactionManagementSystem.Application.Command;
 using TransactionManagementSystem.Domain.Entities;
 using TransactionManagementSystem.Domain.Enums;
-using TransactionManagementSystem.Domain.Exceptions;
 using TransactionManagementSystem.Infrastructure.Data;
 
 namespace TransactionManagementSystem.Application.CommandHandler
@@ -22,7 +21,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
 
         public async Task<TransactionResponse> Handle(DepositCommand request, CancellationToken cancellationToken)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            //using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
@@ -63,7 +62,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
 
                 _context.Transactions.Add(depositTransaction);
                 await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
+                //await transaction.CommitAsync(cancellationToken);
 
                 _logger.LogInformation("Deposit successful. AccountId: {AccountId}, Amount: {Amount}, New Balance: {Balance}",
                     request.AccountId, request.Amount, account.Balance);
@@ -79,7 +78,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
+                //await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(ex, "Error processing deposit for account {AccountId}", request.AccountId);
 
                 return new TransactionResponse

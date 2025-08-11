@@ -1,11 +1,9 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TransactionManagementSystem.Application.Command;
 using TransactionManagementSystem.Application.Services.Interfaces;
 using TransactionManagementSystem.Domain.Entities;
 using TransactionManagementSystem.Domain.Enums;
-using TransactionManagementSystem.Domain.Exceptions;
 using TransactionManagementSystem.Infrastructure.Data;
 
 namespace TransactionManagementSystem.Application.CommandHandler
@@ -29,7 +27,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
         {
             try
             {
-                using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                //using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
                 //var userDetails = await _context.Users.Where(x => x.Id == request.UserId).FirstOrDefaultAsync(cancellationToken);
                 //if (userDetails != null)
@@ -68,7 +66,7 @@ namespace TransactionManagementSystem.Application.CommandHandler
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
+                //await transaction.CommitAsync(cancellationToken);
 
                 _logger.LogInformation($"Account created successfully. AccountId: {account.Id}, AccountNumber: {account.AccountNumber}");
 
